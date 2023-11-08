@@ -11,15 +11,46 @@ class User(Base):
     __tablename__ = 'user'
     # Here we define columns for the table person
     # Notice that each column is also a normal Python instance attribute.
-    email = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    email = Column(String(20))
     name = Column(String(250), nullable=False, unique=False)
     surname = Column(String(250), nullable=False, unique=False)
     password = Column(String(250), nullable=False, unique=False)
-    date_of_bird = Column(String(250), nullable=False, unique=False)
+    date_of_birth = Column(Date, nullable=False, unique=False)
+
+class Favorites(Base):
+    __tablename__ = 'favorites'
+    # Here we define columns for the table person
+    # Notice that each column is also a normal Python instance attribute.
+    id = Column(Integer,ForeignKey("User.id"),primary_key=True)
+    character_fav = Column(Integer,ForeignKey("character.id"), nullable=True)
+    vehicle_fav = Column(Integer,ForeignKey("vehicle.id"), nullable=True)
+    planet_fav = Column(Integer,ForeignKey("planet.id"), nullable=True)
+    film_fav = Column(Integer,ForeignKey("film.id"), nullable=True)
+    rel= relationship (character)
+    rel= relationship (vehicle)
+    rel= relationship (planet)
+    rel= relationship (film)
+    
+
+class Character(Base):
+    __tablename__ = 'character'
+    # Here we define columns for the table address.
+    # Notice that each column is also a normal Python instance attribute.
+    id = Column(Integer, primary_key=True)
+    character_name = Column(String(250), unique=False, nullable=False)
+    gender = Column(String(250), unique=False, nullable=False)
+    hair_color = Column(String(250), unique=False, nullable=False)
+    height = Column(Integer, unique=False, nullable=False)
+    homeworld = Column(Integer, ForeignKey('planet.id'))
+    mass = Column(Integer, unique=False, nullable=False)
+    skin_color = Column(String(250), unique=False, nullable=False)
+    specie = Column(String(250), unique=False, nullable=False)
 
 class Film(Base):
     __tablename__ = 'film'
-    episode_id = Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
+    episode_name = Column(String(250), unique=False, nullable=False)
     created = Column(String(250), unique=False, nullable=False)
     director = Column(String(250), unique=False, nullable=False)
     edited = Column(String(250), unique=False, nullable=False)
@@ -27,10 +58,11 @@ class Film(Base):
 
 class Planet(Base):
     __tablename__ = 'planet'
-    name = Column(String(250), primary_key=True)
+    id = Column(Integer, primary_key=True)
+    planet_name = Column(String(250), unique=False, nullable=False)
     climate = Column(String(250), nullable=False, unique=False)
     diameter = Column(Integer, nullable=False, unique=False)
-    films = Column(String(250), ForeignKey('film.episode_id'))
+    films = Column(Integer, ForeignKey('film.id'))
     orbital_period = Column(Integer, nullable=False, unique=False)
     population = Column(Integer, nullable=False, unique=False)
     resident = Column(Integer, nullable=False, unique=False)
@@ -38,22 +70,10 @@ class Planet(Base):
     surface_water = Column(Integer, nullable=False, unique=False)
     terrain = Column(String(250), nullable=False, unique=False)
 
-class Character(Base):
-    __tablename__ = 'character'
-    # Here we define columns for the table address.
-    # Notice that each column is also a normal Python instance attribute.
-    name = Column(String(250), primary_key=True)
-    gender = Column(String(250), unique=False, nullable=False)
-    hair_color = Column(String(250), unique=False, nullable=False)
-    height = Column(Integer, unique=False, nullable=False)
-    homeworld = Column(String(250),ForeignKey('planet.name'))
-    mass = Column(Integer, unique=False, nullable=False)
-    skin_color = Column(String(250), unique=False, nullable=False)
-    specie = Column(String(250), unique=False, nullable=False)
-
 class Vehicle(Base):
     __tablename__ = 'vehicle'
-    name = Column(String(250), primary_key=True)
+    id = Column(Integer, primary_key=True)
+    vehicle_name = Column(String(250), unique=False, nullable=False)
     model = Column(String(250), nullable=False, unique=False)
     manufacturer = Column(String(250), nullable=False, unique=False)
     cargo_capacity = Column(Integer, nullable=False, unique=False)
@@ -66,24 +86,7 @@ class Vehicle(Base):
     max_atmosphering_speed = Column(Integer, nullable=False, unique=False)
     passengers = Column(Integer, nullable=False, unique=False)
     pilots = Column(Integer, nullable=False, unique=False)
-    films = Column(String(250), ForeignKey('film.episode_id'))
-
-class Fav_character_user(Base):
-    __tablename__ ='fav_character_user'
-    name = Column(String(250), primary_key=True)
-    email = Column(String(250),ForeignKey('user.email'))
-    Fav_character_character = Column(String(30),ForeignKey('character.name'))
-    rel_character = relationship('Character')
-    rel_user = relationship('User')
-
-class Fav_vehicles_user(Base):
-    __tablename__ ='fav_vehicles_user'
-    name = Column(String(250), primary_key=True)
-    email = Column(String(250), ForeignKey('user.email'))
-    Fav_vehicles_vehicles = Column(String(30),ForeignKey('vehicle.name'))
-    rel_character = relationship('Vehicle')
-    rel_user = relationship('User')
-
+    films = Column(Integer, ForeignKey('film.id'))
 
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
